@@ -33,6 +33,7 @@ import CompensationRequest from "./pages/CompensationRequest.jsx";
 
 // Import your AuthPage
 import AuthPage from "./pages/AuthPage.jsx";
+import FormsPage from "./pages/FormsPage.jsx";
 
 // ======= Auth Context Setup =======
 export const AuthContext = createContext();
@@ -123,7 +124,7 @@ const router = createBrowserRouter([
       { path: "/", element: <Homepage /> },
       { path: "/About", element: <About /> },
       { path: "/auth", element: <AuthPage /> },
-      { path: "/forms", element: <CompensationRequest /> },
+      { path: "/forms", element: <FormsPage /> },
       { path: "/upload", element: <UploadImage /> },
       { path: "/Charts", element: <Charts /> },
       { path: "/DisasterAlerts", element: <DisasterAlerts /> },
