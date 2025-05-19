@@ -35,6 +35,9 @@ import CompensationRequest from "./pages/CompensationRequest.jsx";
 import AuthPage from "./pages/AuthPage.jsx";
 import FormsPage from "./pages/FormsPage.jsx";
 
+// Import auth service functions
+import { loginUser, registerUser, getProfile } from "./services/auth";
+
 // ======= Auth Context Setup =======
 export const AuthContext = createContext();
 
@@ -42,32 +45,36 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Simulated token check (replace with your backend logic)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      setUser(JSON.parse(localStorage.getItem("user")));
+      getProfile(token)
+        .then((profile) => setUser(profile))
+        .catch(() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setUser(null);
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  // Simulated login/signup, replace with real API calls
   const login = async (email, password, userType) => {
-    // Call backend here, get token and user object
-    const userObj = { email, userType };
-    setUser(userObj);
-    localStorage.setItem("token", "sampletoken");
-    localStorage.setItem("user", JSON.stringify(userObj));
-    return userObj;
+    const data = await loginUser(email, password, userType);
+    setUser(data.user);
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    return data.user;
   };
 
   const signup = async (name, email, password, userType) => {
-    // Call backend here, get token and user object
-    const userObj = { name, email, userType };
-    setUser(userObj);
-    localStorage.setItem("token", "sampletoken");
-    localStorage.setItem("user", JSON.stringify(userObj));
-    return userObj;
+    const data = await registerUser(name, email, password, userType);
+    setUser(data.user);
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    return data.user;
   };
 
   const logout = () => {
@@ -114,35 +121,38 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <AuthProvider>
-        <Layout>
-          <ProtectedRoutes />
-        </Layout>
+        <ProtectedRoutes>
+          <Layout />
+        </ProtectedRoutes>
       </AuthProvider>
     ),
     errorElement: <ErrorPage />,
     children: [
       { path: "/", element: <Homepage /> },
-      { path: "/About", element: <About /> },
-      { path: "/auth", element: <AuthPage /> },
-      { path: "/forms", element: <FormsPage /> },
-      { path: "/upload", element: <UploadImage /> },
-      { path: "/Charts", element: <Charts /> },
-      { path: "/DisasterAlerts", element: <DisasterAlerts /> },
-      { path: "/Irrigation", element: <Irrigation /> },
+      { path: "/about", element: <About /> },
+      { path: "/charts", element: <Charts /> },
+      { path: "/disaster-alerts", element: <DisasterAlerts /> },
+      { path: "/irrigation", element: <Irrigation /> },
       { path: "/contact", element: <Contact /> },
-      { path: "/CropSuggestion", element: <CropSuggestion /> },
+      { path: "/crop-suggestion", element: <CropSuggestion /> },
       { path: "/chatbot", element: <Chatbot /> },
-      { path: "/cropdata", element: <CropsData /> },
-      { path: "/Expert", element: <Connect /> },
+      { path: "/crops-data", element: <CropsData /> },
+      { path: "/connect", element: <Connect /> },
       { path: "/gallery", element: <Gallery /> },
-      { path: "/WaterManagement", element: <WaterManagement /> },
-      { path: "/disease-detection", element: <Disease /> },
-      { path: "*", element: <ErrorPage /> },
+      { path: "/water-management", element: <WaterManagement /> },
+      { path: "/upload-image", element: <UploadImage /> },
+      { path: "/disease", element: <Disease /> },
+      { path: "/compensation-request", element: <CompensationRequest /> },
+      { path: "/forms", element: <FormsPage /> },
+      { path: "/auth", element: <AuthPage /> },
     ],
   },
 ]);
 
-createRoot(document.getElementById("root")).render(
+const container = document.getElementById("root");
+const root = createRoot(container);
+
+root.render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>
