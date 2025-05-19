@@ -18,7 +18,6 @@ import {
   FaChartBar,
   FaLeaf,
 } from 'react-icons/fa';
-import Navbar from '../components/Navbar';
 import WeatherCard from '../components/WeatherCard';
 
 const FARMER_ANIMATION_URL = '/assets/farmer-ploughing.gif';
@@ -129,8 +128,6 @@ const Homepage = () => {
       animate={{ opacity: 1 }}
       className="min-h-screen pt-20 bg-gradient-to-br from-black via-gray-900 to-black relative"
     >
-      <Navbar isLoggedIn={true}/>
-
       <div className="relative h-[420px] flex items-center justify-center mb-8">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
@@ -312,25 +309,6 @@ const Homepage = () => {
           </div>
         </div>
       </section>
-
-      <footer className="bg-black/80 border-t border-white/10 py-8 px-4 mt-8">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-white/60 text-sm">
-            © {new Date().getFullYear()} Shivam Sharma Developer. All rights reserved.
-          </div>
-          <div className="flex gap-5">
-            <a href="/" className="text-green-400 hover:underline text-sm">
-              Home
-            </a>
-            <a href="/gallery" className="text-green-400 hover:underline text-sm">
-              Gallery
-            </a>
-            <a href="/contact" className="text-green-400 hover:underline text-sm">
-              Contact
-            </a>
-          </div>
-        </div>
-      </footer>
     </motion.div>
   );
 };

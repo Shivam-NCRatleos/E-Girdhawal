@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUserCircle, FaBars, FaTimes } from 'react-icons/fa';
+import { AuthContext } from '../main'; // Adjust this path if needed
 
-const Navbar = ({ isLoggedIn, user, isAdmin }) => {
+const Navbar = () => {
+  const { user, logout } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
-  const navLinks = isLoggedIn
+  // Determine if admin
+  const isAdmin = user?.userType === 'admin';
+
+  const navLinks = user
     ? isAdmin
       ? [
           { title: 'Profile', path: '/profile' },
@@ -19,13 +24,23 @@ const Navbar = ({ isLoggedIn, user, isAdmin }) => {
       : [
           { title: 'Home', path: '/' },
           { title: 'Mobile Upload', path: '/upload' },
-          { title: 'Compensation Request', path: '/compensation' },
+          { title: 'Forms', path: '/forms' },
         ]
     : [
-        { title: 'About', path: '#about' },
-        { title: 'Features', path: '#features' },
-        { title: 'ML Model', path: '#ml-model' },
+        { title: 'About', path: '/About' },
+        { title: 'Features', path: '/#features' },
+        { title: 'ML Model', path: '/#ml-model' },
       ];
+
+  const handleSignOut = () => {
+    logout();
+    setDropdownOpen(false);
+    navigate('/'); // Redirect to home after logout
+  };
+
+  const handleAuthClick = () => {
+    navigate('/auth'); // Redirect to AuthPage
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl shadow-lg px-6 py-4">
@@ -46,7 +61,7 @@ const Navbar = ({ isLoggedIn, user, isAdmin }) => {
             </Link>
           ))}
 
-          {isLoggedIn ? (
+          {user ? (
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -61,18 +76,19 @@ const Navbar = ({ isLoggedIn, user, isAdmin }) => {
                 ) : (
                   <FaUserCircle className="text-2xl" />
                 )}
-                <span>{user?.initials || 'User'}</span>
+                <span>{user?.name || user?.email || 'User'}</span>
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-black rounded-lg shadow-lg">
+                <div className="absolute right-0 mt-2 w-48 bg-black rounded-lg shadow-lg z-50">
                   <Link
                     to="/profile"
                     className="block px-4 py-2 text-white hover:bg-green-400"
+                    onClick={() => setDropdownOpen(false)}
                   >
                     Profile
                   </Link>
                   <button
-                    onClick={() => navigate('/logout')}
+                    onClick={handleSignOut}
                     className="block w-full text-left px-4 py-2 text-white hover:bg-red-400"
                   >
                     Sign Out
@@ -81,12 +97,12 @@ const Navbar = ({ isLoggedIn, user, isAdmin }) => {
               )}
             </div>
           ) : (
-            <Link
-              to="/login"
+            <button
+              onClick={handleAuthClick}
               className="bg-green-400 text-white px-6 py-2 rounded-full"
             >
-              Login
-            </Link>
+              Login / Sign Up
+            </button>
           )}
         </div>
 
@@ -111,7 +127,7 @@ const Navbar = ({ isLoggedIn, user, isAdmin }) => {
               {link.title}
             </Link>
           ))}
-          {isLoggedIn && (
+          {user ? (
             <>
               <Link
                 to="/profile"
@@ -121,12 +137,25 @@ const Navbar = ({ isLoggedIn, user, isAdmin }) => {
                 Profile
               </Link>
               <button
-                onClick={() => navigate('/logout')}
+                onClick={() => {
+                  setIsOpen(false);
+                  handleSignOut();
+                }}
                 className="block w-full text-left text-white hover:text-red-400"
               >
                 Sign Out
               </button>
             </>
+          ) : (
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                handleAuthClick();
+              }}
+              className="block w-full text-white hover:text-green-400 text-left"
+            >
+              Login / Sign Up
+            </button>
           )}
         </div>
       )}
