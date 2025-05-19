@@ -129,7 +129,7 @@ const Homepage = () => {
       animate={{ opacity: 1 }}
       className="min-h-screen pt-20 bg-gradient-to-br from-black via-gray-900 to-black relative"
     >
-      <Navbar />
+      <Navbar isLoggedIn={true}/>
 
       <div className="relative h-[420px] flex items-center justify-center mb-8">
         <div className="absolute inset-0 z-0 overflow-hidden">
