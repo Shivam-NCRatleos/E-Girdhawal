@@ -9,11 +9,9 @@ import {
 } from "react-router-dom";
 import "./index.css";
 
-// Import global layout components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-// Import your pages
 import Homepage from "./pages/Homepage.jsx";
 import About from "./pages/About.jsx";
 import Charts from "./pages/Charts.jsx";
@@ -30,15 +28,11 @@ import WaterManagement from "./pages/WaterConservation.jsx";
 import UploadImage from "./pages/UploadImage.jsx";
 import Disease from "./pages/Disease.jsx";
 import CompensationRequest from "./pages/CompensationRequest.jsx";
-
-// Import your AuthPage
 import AuthPage from "./pages/AuthPage.jsx";
 import FormsPage from "./pages/FormsPage.jsx";
 
-// Import auth service functions
 import { loginUser, registerUser, getProfile } from "./services/auth";
 
-// ======= Auth Context Setup =======
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -90,7 +84,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// ======= Global Layout =======
 function Layout() {
   return (
     <>
@@ -103,19 +96,15 @@ function Layout() {
   );
 }
 
-// ======= Route Protection =======
 function ProtectedRoutes() {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
-
-  // Home page is always public
   if (loading) return <div>Loading...</div>;
   if (location.pathname === "/") return <Outlet />;
   if (!user) return <AuthPage />;
   return <Outlet />;
 }
 
-// ======= Routing Setup =======
 const router = createBrowserRouter([
   {
     path: "/",

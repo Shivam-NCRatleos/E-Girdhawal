@@ -1,28 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../main';
 import Header from '../components/Header';
 import FormInput from '../components/FormInput';
 import TextArea from '../components/TextArea';
 import SubmitButton from '../components/SubmitButton';
+import { createTicket } from '../services/tickets';
 
 const CompensationRequest = () => {
+  const { user, token } = useContext(AuthContext);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
     cropDetails: '',
     problemsFaced: '',
     proposedAmount: '',
     comments: '',
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Submitted:', formData);
-    // Add API call or backend integration here
+    setLoading(true);
+    try {
+      await createTicket(
+        {
+          type: 'compensation',
+          description: `${formData.cropDetails}\nProblems: ${formData.problemsFaced}\nComments: ${formData.comments}`,
+          requestedAmount: Number(formData.proposedAmount),
+        },
+        token
+      );
+      alert('Compensation request submitted!');
+      setFormData({
+        cropDetails: '',
+        problemsFaced: '',
+        proposedAmount: '',
+        comments: '',
+      });
+    } catch (err) {
+      alert(err?.response?.data?.message || 'Error submitting request');
+    }
+    setLoading(false);
   };
 
   return (
@@ -34,21 +55,6 @@ const CompensationRequest = () => {
       <div className="max-w-2xl mx-auto bg-white/5 p-8 rounded-2xl shadow-lg border border-white/10">
         <form onSubmit={handleSubmit} className="space-y-6">
           <FormInput
-            label="Name"
-            name="name"
-            placeholder="Enter your full name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-          <FormInput
-            label="Email"
-            name="email"
-            type="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          <TextArea
             label="Crop Details"
             name="cropDetails"
             placeholder="Describe the crop you are requesting compensation for"
@@ -77,7 +83,7 @@ const CompensationRequest = () => {
             value={formData.comments}
             onChange={handleChange}
           />
-          <SubmitButton label="Submit Request" />
+          <SubmitButton label={loading ? "Submitting..." : "Submit Request"} disabled={loading} />
         </form>
       </div>
     </div>

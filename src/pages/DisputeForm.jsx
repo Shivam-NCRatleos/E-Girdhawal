@@ -1,25 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../main';
 import Header from '../components/Header';
 import FormInput from '../components/FormInput';
 import TextArea from '../components/TextArea';
 import SubmitButton from '../components/SubmitButton';
+import { createTicket } from '../services/tickets';
 
 const DisputeForm = () => {
+  const { user, token } = useContext(AuthContext);
+  // In real use: fetch recent image from backend for user's last upload
   const [formData, setFormData] = useState({
-    recentImage: '/path/to/recent-image.jpg',
     expectedPrediction: '',
     comment: '',
+    recentImage: '/path/to/recent-image.jpg',
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Dispute Form Submitted:', formData);
-    // Add API call or backend integration here
+    setLoading(true);
+    try {
+      await createTicket(
+        {
+          type: 'dispute',
+          description: `Expected Prediction: ${formData.expectedPrediction}\nComment: ${formData.comment}`,
+          images: [formData.recentImage], // In real use, get image path from backend
+        },
+        token
+      );
+      alert('Dispute submitted!');
+      setFormData({
+        expectedPrediction: '',
+        comment: '',
+        recentImage: '/path/to/recent-image.jpg',
+      });
+    } catch (err) {
+      alert(err?.response?.data?.message || 'Error submitting dispute');
+    }
+    setLoading(false);
   };
 
   return (
@@ -52,7 +75,7 @@ const DisputeForm = () => {
             value={formData.comment}
             onChange={handleChange}
           />
-          <SubmitButton label="Submit Dispute" />
+          <SubmitButton label={loading ? "Submitting..." : "Submit Dispute"} disabled={loading} />
         </form>
       </div>
     </div>
