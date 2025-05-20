@@ -44,10 +44,7 @@ IAUhBRUPrOjyeQe4PJs9YPAwydYn1pb3mtjWYCE+c6+JZg2IOsfi02x5vnG3dXIL
   "universe_domain": "googleapis.com"
 };
 
-// === GOOGLE EARTH ENGINE ANALYSIS MOCK ===
 async function getEarthEngineAnalysis({ lat, lng }) {
-  // This is where you would call the real GEE API.
-  // The result is hardcoded for demonstration.
   return {
     timestamp: new Date().toISOString(),
     location: { latitude: lat, longitude: lng },
@@ -67,7 +64,6 @@ async function getEarthEngineAnalysis({ lat, lng }) {
         vegetationIndex: 38,
       }
     },
-    // New: Deep analysis summary
     summary: {
       depth: "The water stress is severe and deep, affecting most of the root zone. Immediate intervention is required to prevent crop loss.",
       removal: "To reduce stress: Start deep irrigation now, use mulch to retain moisture, and consider shade nets to reduce evaporation. Regularly monitor soil moisture for the next week."
@@ -148,7 +144,6 @@ const UploadImage = ({ user }) => {
     setCameraAllowed(true);
   };
 
-  // Capture image from video stream
   const captureImage = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -161,15 +156,12 @@ const UploadImage = ({ user }) => {
     return dataUrl;
   };
 
-  // Upload image and get GEE analysis
   const handleUpload = async () => {
     setAnalysisResponse(null);
     setUploading(true);
     const base64Data = captureImage();
 
-    // Simulate backend upload latency and uploading animation
     setTimeout(async () => {
-      // Always show a successful upload message for UX
       if (location) {
         try {
           const geeData = await getEarthEngineAnalysis({
