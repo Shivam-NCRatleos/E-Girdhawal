@@ -1,6 +1,7 @@
 const API_BASE_URL = "http://localhost:8000/api"; // Update if needed
 
 export async function loginUser(email, password, userType) {
+    console.log(`User Login Tried with ${email} ${password} ${userType}` )
   const res = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

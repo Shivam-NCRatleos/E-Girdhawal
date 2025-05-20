@@ -29,7 +29,6 @@ const FieldDataRequest = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Use FormData for file upload
     const data = new FormData();
     data.append('type', 'field_add');
     data.append('description',
@@ -41,6 +40,7 @@ const FieldDataRequest = () => {
 
     try {
       await createTicket(data, token, true);
+      console.log("here : ",data)
       alert('Field data request submitted!');
       setFormData({
         fieldName: '',
@@ -49,7 +49,7 @@ const FieldDataRequest = () => {
         supportingDocument: null,
       });
     } catch (err) {
-      alert(err?.response?.data?.message || 'Error submitting field request');
+      alert(err?.response?.data?.message || `Error submitting field request ${err}`);
     }
     setLoading(false);
   };

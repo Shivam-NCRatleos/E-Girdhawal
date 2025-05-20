@@ -1,5 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { StrictMode } from "react";
+import React, { createContext, useState, useEffect, useContext, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import {
   createBrowserRouter,
@@ -33,6 +32,7 @@ import FormsPage from "./pages/FormsPage.jsx";
 
 import { loginUser, registerUser, getProfile } from "./services/auth";
 
+// Auth Context and Provider
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -84,6 +84,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// Layout with Navbar and Footer
 function Layout() {
   return (
     <>
@@ -96,43 +97,52 @@ function Layout() {
   );
 }
 
+// Protected Routes Wrapper
 function ProtectedRoutes() {
   const { user, loading } = useContext(AuthContext);
-  const location = useLocation();
   if (loading) return <div>Loading...</div>;
-  if (location.pathname === "/") return <Outlet />;
   if (!user) return <AuthPage />;
   return <Outlet />;
 }
 
+// Router setup
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <AuthProvider>
-        <ProtectedRoutes>
-          <Layout />
-        </ProtectedRoutes>
+        <Layout />
       </AuthProvider>
     ),
     errorElement: <ErrorPage />,
     children: [
+      // Homepage is public
       { path: "/", element: <Homepage /> },
-      { path: "/about", element: <About /> },
-      { path: "/charts", element: <Charts /> },
-      { path: "/disaster-alerts", element: <DisasterAlerts /> },
-      { path: "/irrigation", element: <Irrigation /> },
-      { path: "/contact", element: <Contact /> },
-      { path: "/crop-suggestion", element: <CropSuggestion /> },
-      { path: "/chatbot", element: <Chatbot /> },
-      { path: "/crops-data", element: <CropsData /> },
-      { path: "/connect", element: <Connect /> },
-      { path: "/gallery", element: <Gallery /> },
-      { path: "/water-management", element: <WaterManagement /> },
-      { path: "/upload-image", element: <UploadImage /> },
-      { path: "/disease", element: <Disease /> },
-      { path: "/compensation-request", element: <CompensationRequest /> },
-      { path: "/forms", element: <FormsPage /> },
+
+      // Protected Routes
+      {
+        element: <ProtectedRoutes />,
+        children: [
+          { path: "/about", element: <About /> },
+          { path: "/charts", element: <Charts /> },
+          { path: "/disaster-alerts", element: <DisasterAlerts /> },
+          { path: "/irrigation", element: <Irrigation /> },
+          { path: "/contact", element: <Contact /> },
+          { path: "/crop-suggestion", element: <CropSuggestion /> },
+          { path: "/chatbot", element: <Chatbot /> },
+          { path: "/crops-data", element: <CropsData /> },
+          { path: "/connect", element: <Connect /> },
+          { path: "/gallery", element: <Gallery /> },
+          { path: "/water-management", element: <WaterManagement /> },
+          { path: "/upload-image", element: <UploadImage /> },
+          { path: "/disease", element: <Disease /> },
+          { path: "/compensation-request", element: <CompensationRequest /> },
+          { path: "/forms", element: <FormsPage /> },
+          { path: "/upload", element: <UploadImage /> },
+
+        ],
+      },
+      // Auth page is public
       { path: "/auth", element: <AuthPage /> },
     ],
   },
