@@ -8,6 +8,7 @@ export async function loginUser(email, password, userType) {
     body: JSON.stringify({ email, password, userType }),
   });
   if (!res.ok) throw new Error((await res.json()).message || "Login failed");
+  console.log("User :", res.json(), "token")
   return res.json(); // Should return { user, token }
 }
 

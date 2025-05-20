@@ -40,7 +40,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MmJlNjM3YjdlMjg5ZTE4OWExMzkzOSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ3NzA3NDQ4LCJleHAiOjE3NDgzMTIyNDh9.Nhx5bcFKv0OvZGRyQ4MzLVc2jfcdhpy9HnE-U5G5oLU";
     if (token) {
       getProfile(token)
         .then((profile) => setUser(profile))
