@@ -170,7 +170,6 @@ const UploadImage = ({ user }) => {
     // Simulate backend upload latency and uploading animation
     setTimeout(async () => {
       // Always show a successful upload message for UX
-      // Then call Google Earth Engine "API" (mocked in-browser)
       if (location) {
         try {
           const geeData = await getEarthEngineAnalysis({
